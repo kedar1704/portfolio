@@ -1,0 +1,50 @@
+<form id="contact-form">
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" required>
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required>
+
+  <label for="message">Message:</label>
+  <textarea id="message" name="message" required></textarea>
+
+  <button type="submit">Submit</button>
+</form>
+
+
+
+
+const form = document.getElementById('contact-form');
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const message = document.getElementById('message').value;
+
+  if (!validateEmail(email)) {
+    alert('Please enter a valid email address.');
+    return;
+  }
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/submit-form');
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      alert('Your message has been sent!');
+      form.reset();
+    }
+  };
+  xhr.send(JSON.stringify({
+    name: name,
+    email: email,
+    message: message
+  }));
+});
+
+function validateEmail(email) {
+  const regex = /^([a-zA-Z0-9_\.-]+)@([a-zA-Z0-9_\.-]+)\.([a-zA-Z]{2,5})$/;
+  return regex.test(email);
+}

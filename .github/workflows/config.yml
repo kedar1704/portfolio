@@ -1,0 +1,25 @@
+name: Build and Push Docker Image to DockerHub
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  push:
+    branches:
+      - main
+
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USER }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Build Docker Image
+        run: sudo docker build -t "${DOCKERHUB_USERNAME}"/portfolio:latest .
+      - name: Login to DockerHub
+        run: echo "${DOCKERHUB_TOKEN}" | sudo docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
+      - name: Push Docker Image to DockerHub
+        run: sudo docker push "${DOCKERHUB_USERNAME}"/portfolio:latest
